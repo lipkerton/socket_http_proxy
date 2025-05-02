@@ -11,31 +11,19 @@ from method.settings import CLIENT_REQUESTS_COUNTER
 @info_log
 def client_request_handler(
     client: socket.socket,
-    client_address: tuple[str, int]):
+    client_address: tuple[str, int]
+) -> None:
     '''Han dle client's request.'''
     request = b''  # save first chunk.
-    client.setblocking(False)
     while True:
-        try:
-            # если я буду тупо считывать данные так
-            # то в неблокирующем режиме socket
-            # сразу выкинет мне ошибку, если данные
-            # не придут мгновенно
-            chunk = client.recv(1024)
-            if not chunk:
-                break
-            request += chunk  # make one message.
-        except BlockingIOError as message:
-            logging.error(
-                'The data is absent: %s',
-                message
-            )
-            # поэтому нужно подождать данные.
-            check_readiness, _, _ = select.select(
-                [client], [], [], 0.5
-            )
-            if not check_readiness:
-                continue
+        # здесь блокирующая функция остановит
+        # работу потока и будет ждать данных,
+        # тогда управление перейдет на другой поток,
+        # который уже, возможно, данных дождался.
+        chunk = client.recv(1024)
+        if not chunk:
+            break
+        request += chunk  # make one message.
     print(request, client_address)
 
 
