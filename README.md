@@ -6,7 +6,7 @@
 - Асинхронное чтение сообщений от нескольких клиентских соединений.
 
 # Особенности #
-- Использованы модули `socket`, `sys`, `logging`, `threading`, `ipaddress`.
+- Использованы модули `sys`, `logging`, `gevent`, `ipaddress`, `email`
 - Настроено логгирование.
 - Сделаны декораторы и валидаторы.
 - IP-адрес и порт сервера могут быть введены через командную строку.
@@ -14,7 +14,18 @@
 
 # Как запустить? #
 Чтобы запустить нужно клонировать репозиторий и ввести команды:
+- Для Windows:
+```PowerShell
+python -m venv .venv
+.\.venv\Scripts\acitvate
+python -m pip install -r requirements.txt
+python main.py <IP-сервера> <порт>
+```
+- Для MacOS:
 ```Bash
+python -m venv .venv
+source .venv/bin/acitvate
+python -m pip install -r requirements.txt
 python main.py <IP-сервера> <порт>
 ```
 Ради шутки можно отправлять сообщения от скрипта клиента - он находится в папке `method`:
@@ -22,3 +33,7 @@ python main.py <IP-сервера> <порт>
 python sock_client.py
 ```
 Но будьте бдительны - я настраивал его только на подключение к локальному адресу.
+Протестировать на реальном запросе можно через утилиту `curl`:
+```Bash
+ curl --proxy "http://127.0.0.1:<номер_порта>" "http://httpbin.org/ip"
+```
